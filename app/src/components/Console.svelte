@@ -6,7 +6,10 @@
   let lines: string[] = [];
 
   export function addLine(line: string) {
-    lines.push(line);
+    const date = new Date();
+    lines.push(
+      `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}] ${line}`
+    );
 
     while (lines.length > LINE_BUFFER_SIZE) {
       lines.shift();
