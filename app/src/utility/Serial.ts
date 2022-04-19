@@ -90,4 +90,8 @@ export default class Serial extends EventEmitter {
     await this.port.close();
     this.onDisconnect();
   }
+
+  async writeLine(line: string) {
+    await this.streams.writer.write(line.trim() + "\n");
+  }
 }

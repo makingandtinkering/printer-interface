@@ -60,6 +60,12 @@
   async function disconnect() {
     await serial.close();
   }
+
+  export async function addLines(lines: string[]) {
+    for (const line of lines) {
+      await serial.writeLine(line);
+    }
+  }
 </script>
 
 {#if mounted && !Serial.isSupported()}
