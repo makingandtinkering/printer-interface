@@ -3,6 +3,12 @@ import { EventEmitter } from "events";
 export default class Serial extends EventEmitter {
   port: SerialPort;
   connected: boolean;
+  streams: {
+    reader: ReadableStreamDefaultReader<string>;
+    readerDone: Promise<void>;
+    writer: WritableStreamDefaultWriter<string>;
+    writerDone: Promise<void>;
+  };
 
   static isSupported(): boolean {
     return "serial" in navigator;
@@ -43,9 +49,37 @@ export default class Serial extends EventEmitter {
 
     this.port = port;
     this.onConnect();
+
+    const textDecoder = new TextDecoderStream();
+    const textEncoder = new TextEncoderStream();
+
+    this.streams = {
+      readerDone: port.readable.pipeTo(textDecoder.writable),
+      reader: textDecoder.readable.getReader(),
+      writerDone: textEncoder.readable.pipeTo(port.writable),
+      writer: textEncoder.writable.getWriter(),
+    };
+
+    setTimeout(async () => {
+      while (true) {
+        const { value, done } = await this.streams.reader.read();
+        if (done) {
+          this.streams.reader.releaseLock();
+          break;
+        }
+
+        console.log(value);
+      }
+    }, 0);
   }
 
   async close() {
+    this.streams.reader.cancel();
+    // Suppress stream close error
+    await this.streams.readerDone.catch(() => {});
+    this.streams.writer.close();
+    await this.streams.writerDone;
+
     await this.port.close();
     this.onDisconnect();
   }
