@@ -9,9 +9,9 @@
   import Snackbar, { Actions } from "@smui/snackbar";
   import IconButton from "@smui/icon-button";
 
-  import Serial from "../utility/Serial";
+  import MarlinSerial from "../utility/MarlinSerial";
 
-  const serial = new Serial();
+  const serial = new MarlinSerial();
   let errorSnackbar: SnackbarComponentDev;
   let errorSnackbarContents: string;
 
@@ -66,13 +66,17 @@
   }
 
   export async function addLines(lines: string[]) {
-    for (const line of lines) {
-      await serial.writeLine(line);
+    try {
+      for (const line of lines) {
+        await serial.writeLine(line);
+      }
+    } catch (err) {
+      displayError(err);
     }
   }
 </script>
 
-{#if mounted && !Serial.isSupported()}
+{#if mounted && !MarlinSerial.isSupported()}
   <Dialog open scrimClickAction="" escapeKeyAction="">
     <Content>
       Your browser does not support Serial connections. Try Chrome, Edge or
