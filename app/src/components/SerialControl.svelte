@@ -45,6 +45,11 @@
     });
   });
 
+  function displayError(err) {
+    errorSnackbarContents = `Error: ${err.message || err.toString()}`;
+    errorSnackbar.open();
+  }
+
   async function connect() {
     try {
       const port = await serial.selectPort();
@@ -52,8 +57,7 @@
 
       await serial.open(port, parseInt(baudRate, 10));
     } catch (err) {
-      errorSnackbarContents = `Error: ${err.message}`;
-      errorSnackbar.open();
+      displayError(err);
     }
   }
 
