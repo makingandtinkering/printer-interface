@@ -13,11 +13,20 @@
 
   let lines: string[] = [];
 
+  function pad(num, n) {
+    return num.toString().padStart(n, "0");
+  }
+
+  function getTimestampString() {
+    const d = new Date();
+    return `${pad(d.getHours(), 2)}:${pad(d.getMinutes(), 2)}:${pad(
+      d.getSeconds(),
+      2
+    )}.${pad(d.getMilliseconds(), 3)}`;
+  }
+
   export function addLine(line: string) {
-    const date = new Date();
-    lines.push(
-      `[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}] ${line}`
-    );
+    lines.push(`[${getTimestampString()}] ${line}`);
 
     while (lines.length > LINE_BUFFER_SIZE) {
       lines.shift();
