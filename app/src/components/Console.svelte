@@ -54,6 +54,7 @@
       dispatch("data", {
         lines: textInputContent.split(ROW_SEPARATOR_REGEX),
       });
+      textInputContent = "";
       evt.preventDefault();
     }
   }
