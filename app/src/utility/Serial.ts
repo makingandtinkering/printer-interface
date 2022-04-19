@@ -61,6 +61,7 @@ export default class Serial extends EventEmitter {
     };
 
     setTimeout(async () => {
+      let buffer = "";
       while (true) {
         const { value, done } = await this.streams.reader.read();
         if (done) {
@@ -68,7 +69,13 @@ export default class Serial extends EventEmitter {
           break;
         }
 
-        console.log(value);
+        buffer += value;
+        const lines = buffer.split(/[\r\n]+/);
+        // Last element is not complete, buffer until newline received
+        buffer = lines.pop();
+        for (const line of lines) {
+          this.emit("line", line);
+        }
       }
     }, 0);
   }

@@ -1,6 +1,9 @@
 <script lang="ts">
-  import Serial from "../components/Serial.svelte";
-  let foo: string = "hello";
+  import Console from "../components/Console.svelte";
+  import SerialControl from "../components/SerialControl.svelte";
+
+  let serialConsole;
 </script>
 
-<Serial />
+<SerialControl on:line={(evt) => serialConsole.addLine(evt.detail.text)} />
+<Console bind:this={serialConsole} />

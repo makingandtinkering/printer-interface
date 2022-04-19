@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
 
   import Select, { Option } from "@smui/select";
   import Card, { Content } from "@smui/card";
@@ -14,6 +14,8 @@
   const serial = new Serial();
   let errorSnackbar: SnackbarComponentDev;
   let errorSnackbarContents: string;
+
+  const dispatch = createEventDispatcher();
 
   // We use this to handle server side where `navigator` does not exist
   let mounted: boolean = false;
@@ -35,6 +37,12 @@
 
   serial.on("disconnect", () => {
     connected = false;
+  });
+
+  serial.on("line", (line: string) => {
+    dispatch("line", {
+      text: line,
+    });
   });
 
   async function connect() {
