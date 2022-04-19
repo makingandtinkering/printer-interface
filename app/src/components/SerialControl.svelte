@@ -68,6 +68,10 @@
   export async function addLines(lines: string[]) {
     try {
       for (const line of lines) {
+        // Send to console for display too
+        dispatch("line", {
+          text: line,
+        });
         await serial.writeLine(line);
       }
     } catch (err) {
