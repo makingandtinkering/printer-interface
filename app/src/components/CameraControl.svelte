@@ -12,6 +12,8 @@
   let permissionDenied: boolean = false;
   let videoInputs: MediaDeviceInfo[] = [];
 
+  let videoDisplay;
+
   onMount(async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ video: true });
@@ -31,10 +33,26 @@
     loading = false;
   });
 
-  let selectedId: string = null;
+  function onVideoSourceSelect(evt) {
+    const deviceId = evt.detail.value;
+
+    if (videoDisplay && deviceId) {
+      navigator.mediaDevices
+        .getUserMedia({
+          video: {
+            deviceId: { exact: deviceId },
+          },
+        })
+        .then((stream) => {
+          videoDisplay.srcObject = stream;
+        });
+    } else {
+      videoDisplay.srcObject = undefined;
+    }
+  }
 </script>
 
-<Card padded>
+<Card padded style="max-width: 500px">
   <h3 style="margin: 0">
     Video Control
     {#if loading}
@@ -52,8 +70,8 @@
   </h3>
   <Content
     ><Select
-      bind:value={selectedId}
-      label="Input"
+      on:MDCSelect:change={onVideoSourceSelect}
+      label="Device"
       disabled={loading || permissionDenied}
     >
       {#each videoInputs as input}
@@ -62,6 +80,12 @@
       <svelte:fragment slot="helperText"
         >Usually USB2.0 UVC PC Camera</svelte:fragment
       >
-    </Select></Content
-  >
+    </Select>
+
+    <hr />
+
+    <video bind:this={videoDisplay} style="width: 100%" playsinline autoplay>
+      <track kind="captions" />
+    </video>
+  </Content>
 </Card>
