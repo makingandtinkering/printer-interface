@@ -38,7 +38,7 @@
   <h3 style="margin: 0">
     Video Control
     {#if loading}
-      <CircularProgress style="height: 1em; width: 1em;" indeterminate />
+      <CircularProgress style="height: 0.95em; width: 0.95em;" indeterminate />
     {/if}
     {#if permissionDenied}
       <Wrapper>
