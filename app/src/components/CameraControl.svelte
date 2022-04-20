@@ -2,12 +2,15 @@
   import { onMount, createEventDispatcher } from "svelte";
   import Card, { Content } from "@smui/card";
   import Select, { Option } from "@smui/select";
+  import CircularProgress from "@smui/circular-progress";
 
   const dispatch = createEventDispatcher();
 
+  let loading: boolean = false;
   let videoInputs: MediaDeviceInfo[] = [];
 
   onMount(async () => {
+    loading = true;
     try {
       await navigator.mediaDevices.getUserMedia({ video: true });
     } catch (error) {
@@ -22,13 +25,19 @@
     videoInputs = devices.filter(
       (device) => device.label && device.kind === "videoinput"
     );
+    loading = false;
   });
 
   let selectedId: string = null;
 </script>
 
 <Card padded>
-  <h3 style="margin: 0">Video Control</h3>
+  <h3 style="margin: 0">
+    Video Control
+    {#if loading}
+      <CircularProgress style="height: 1em; width: 1em;" indeterminate />
+    {/if}
+  </h3>
   <Content
     ><Select bind:value={selectedId} label="Input">
       {#each videoInputs as input}
