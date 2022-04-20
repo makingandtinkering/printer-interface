@@ -5,15 +5,10 @@
   import Card, { Content } from "@smui/card";
   import Button, { Label } from "@smui/button";
   import Dialog from "@smui/dialog";
-  import type { SnackbarComponentDev } from "@smui/snackbar";
-  import Snackbar, { Actions } from "@smui/snackbar";
-  import IconButton from "@smui/icon-button";
 
   import MarlinSerial from "../utility/MarlinSerial";
 
   const serial = new MarlinSerial();
-  let errorSnackbar: SnackbarComponentDev;
-  let errorSnackbarContents: string;
 
   const dispatch = createEventDispatcher();
 
@@ -45,19 +40,14 @@
     });
   });
 
-  function displayError(err) {
-    errorSnackbarContents = `Error: ${err.message || err.toString()}`;
-    errorSnackbar.open();
-  }
-
   async function connect() {
     try {
       const port = await serial.selectPort();
       if (!port) return;
 
       await serial.open(port, parseInt(baudRate, 10));
-    } catch (err) {
-      displayError(err);
+    } catch (error) {
+      dispatch("error", { error });
     }
   }
 
@@ -74,8 +64,8 @@
         });
         await serial.writeLine(line);
       }
-    } catch (err) {
-      displayError(err);
+    } catch (error) {
+      dispatch("error", { error });
     }
   }
 </script>
@@ -88,13 +78,6 @@
     </Content>
   </Dialog>
 {/if}
-
-<Snackbar bind:this={errorSnackbar} labelText={errorSnackbarContents}>
-  <Label />
-  <Actions>
-    <IconButton class="material-icons" title="Dismiss">close</IconButton>
-  </Actions>
-</Snackbar>
 
 <Card padded>
   <h3 style="margin: 0">Serial Port</h3>
