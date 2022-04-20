@@ -20,15 +20,20 @@
   let serialConsole, serialControl;
 </script>
 
-<SerialControl
-  bind:this={serialControl}
-  on:line={(evt) => serialConsole.addLine(evt.detail.text)}
-  on:error={(evt) => displayError(evt.detail.error)}
-/>
-<Console
-  bind:this={serialConsole}
-  on:data={(evt) => serialControl.addLines(evt.detail.lines)}
-/>
+<div style="display: flex;flex-direction: row; width: 100vw; height: 100vh;">
+  <div style="display: flex;flex-direction: column">
+    <SerialControl
+      bind:this={serialControl}
+      on:line={(evt) => serialConsole.addLine(evt.detail.text)}
+      on:error={(evt) => displayError(evt.detail.error)}
+    />
+    <Console
+      bind:this={serialConsole}
+      on:data={(evt) => serialControl.addLines(evt.detail.lines)}
+    />
+  </div>
+  <CameraControl on:error={(evt) => displayError(evt.detail.error)} />
+</div>
 
 <Snackbar bind:this={errorSnackbar} labelText={errorSnackbarContents}>
   <Label />
