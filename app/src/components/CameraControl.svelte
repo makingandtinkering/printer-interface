@@ -4,15 +4,18 @@
   import Select, { Option } from "@smui/select";
   import CircularProgress from "@smui/circular-progress";
   import Tooltip, { Wrapper } from "@smui/tooltip";
+  import Button, { Label } from "@smui/button";
   import { Icon } from "@smui/common";
 
   const dispatch = createEventDispatcher();
 
   let loading: boolean = true;
   let permissionDenied: boolean = false;
+  let validStreamSource: boolean = false;
   let videoInputs: MediaDeviceInfo[] = [];
 
-  let videoDisplay;
+  let videoDisplay, snapshotDisplay;
+  let snapshot: string = null;
 
   onMount(async () => {
     try {
@@ -36,7 +39,9 @@
   function onVideoSourceSelect(evt) {
     const deviceId = evt.detail.value;
 
-    if (videoDisplay && deviceId) {
+    validStreamSource = false;
+    if (deviceId) {
+      loading = true;
       navigator.mediaDevices
         .getUserMedia({
           video: {
@@ -45,14 +50,54 @@
         })
         .then((stream) => {
           videoDisplay.srcObject = stream;
+          validStreamSource = true;
+        })
+        .catch((error) => {
+          dispatch("error", { error });
+        })
+        .finally(() => {
+          loading = false;
         });
     } else {
       videoDisplay.srcObject = undefined;
     }
   }
+
+  async function takePhoto() {
+    if (!validStreamSource) {
+      throw "No valid stream source available";
+    }
+
+    const stream = videoDisplay.srcObject;
+    const settings = stream.getVideoTracks()[0].getSettings();
+
+    snapshotDisplay.width = settings.width;
+    snapshotDisplay.height = settings.height;
+
+    const ctx = snapshotDisplay.getContext("2d");
+
+    ctx.drawImage(
+      videoDisplay,
+      0,
+      0,
+      snapshotDisplay.width,
+      snapshotDisplay.height
+    );
+
+    return snapshotDisplay.toDataURL("image/png");
+  }
+
+  function saveImage(imageStr, fileName) {
+    const ele = document.createElement("a");
+    ele.href = imageStr.replace("image/png", "application/octet-stream");
+    ele.download = fileName;
+    document.body.appendChild(ele);
+    ele.click();
+    ele.remove();
+  }
 </script>
 
-<Card padded style="max-width: 500px">
+<Card padded style="width: 500px">
   <h3 style="margin: 0">
     Video Control
     {#if loading}
@@ -68,8 +113,8 @@
       </Wrapper>
     {/if}
   </h3>
-  <Content
-    ><Select
+  <Content>
+    <Select
       on:MDCSelect:change={onVideoSourceSelect}
       label="Device"
       disabled={loading || permissionDenied}
@@ -81,11 +126,27 @@
         >Usually USB2.0 UVC PC Camera</svelte:fragment
       >
     </Select>
-
-    <hr />
-
+  </Content>
+  <h3 style="margin: 0">Live View</h3>
+  <Content>
     <video bind:this={videoDisplay} style="width: 100%" playsinline autoplay>
       <track kind="captions" />
     </video>
+  </Content>
+  <h3 style="margin: 0">Snapshot</h3>
+  <Content>
+    <Button
+      disabled={!validStreamSource}
+      on:click={async () => (snapshot = await takePhoto())}
+    >
+      <Label>Capture</Label>
+    </Button>
+    <Button
+      disabled={snapshot === null}
+      on:click={() => saveImage(snapshot, "download.png")}
+    >
+      <Label>Download</Label>
+    </Button>
+    <canvas bind:this={snapshotDisplay} style="width: 100%" />
   </Content>
 </Card>
