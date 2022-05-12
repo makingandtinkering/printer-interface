@@ -9,6 +9,7 @@
   import ScanningControl from "../components/ScanningControl.svelte";
 
   import CameraView from "../components/CameraView.svelte";
+  import PrinterControl from "../components/PrinterControl.svelte";
 
   let errorSnackbar: SnackbarComponentDev;
   let errorSnackbarContents: string;
@@ -44,6 +45,7 @@
         cameraView.save();
       }}
     />
+    <PrinterControl sendLine={(line) => serialControl.addLines([line])} />
   </div>
   <Console
     bind:this={serialConsole}
