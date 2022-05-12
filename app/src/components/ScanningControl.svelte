@@ -9,7 +9,7 @@
     step: number = 1;
 
   let feedrate: number = 3000,
-    move_delay: number = 100;
+    move_delay: number = 500;
 
   let total_photo_count: number = 0,
     photo_count: number = 0;
@@ -38,7 +38,7 @@
     }
   }
 
-  function takeStep() {
+  async function takeStep() {
     if (!active) {
       return;
     }
@@ -46,6 +46,8 @@
     if (step_index === 0) {
       // take photo here
       photo_count++;
+
+      await sendLine("G91");
     }
 
     const cur_step_y = Math.floor(step_index / step_x);
@@ -58,17 +60,21 @@
         done = true;
       } else {
         // Last step in this row, move up
-        console.log("up");
+        await sendLine(`G0 Y${step} F${feedrate}`);
       }
     } else {
       if (cur_step_y % 2 == 0) {
-        console.log("right");
+        // Right
+        await sendLine(`G0 X${step} F${feedrate}`);
       } else {
-        console.log("left");
+        // Left
+        await sendLine(`G0 X-${step} F${feedrate}`);
       }
     }
 
     if (!done) {
+      // Wait for move to be done
+      await sendLine("M400");
       photo_count++;
       step_index++;
       setTimeout(takeStep, move_delay);
@@ -76,6 +82,8 @@
       active = false;
     }
   }
+
+  export let sendLine: Function = null;
 </script>
 
 <Card padded style="height: 100%">
