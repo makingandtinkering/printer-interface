@@ -39,6 +39,8 @@
   let textInputContent: string = "";
   let textArea: boolean = false;
 
+  export let inputEnabled: boolean = false;
+
   function onKeypress(evt) {
     if (evt.key === "\n") {
       textArea = true;
@@ -77,6 +79,8 @@
       bind:this={textInput}
       bind:value={textInputContent}
       on:keypress={onKeypress}
+      disabled={!inputEnabled}
+      title={inputEnabled ? "" : "A serial port must be connected"}
     >
       <HelperText slot="helper">Ctrl-Enter to insert new line</HelperText>
     </Textfield>

@@ -20,6 +20,8 @@
   }
 
   let serialConsole, serialControl, cameraView;
+
+  let serialConnected: boolean = false;
 </script>
 
 <div style="display: flex;flex-direction: row;">
@@ -28,6 +30,8 @@
       bind:this={serialControl}
       on:line={(evt) => serialConsole.addLine(evt.detail.text)}
       on:error={(evt) => displayError(evt.detail.error)}
+      on:connect={() => (serialConnected = true)}
+      on:disconnect={() => (serialConnected = false)}
     />
     <CameraControl
       on:error={(evt) => displayError(evt.detail.error)}
@@ -37,6 +41,7 @@
   </div>
   <Console
     bind:this={serialConsole}
+    inputEnabled={serialConnected}
     on:data={(evt) => serialControl.addLines(evt.detail.lines)}
   />
   <CameraView bind:this={cameraView} />

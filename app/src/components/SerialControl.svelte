@@ -28,10 +28,13 @@
 
   serial.on("connect", () => {
     connected = true;
+
+    dispatch("connect");
   });
 
   serial.on("disconnect", () => {
     connected = false;
+    dispatch("disconnect");
   });
 
   serial.on("line", (line: string) => {
