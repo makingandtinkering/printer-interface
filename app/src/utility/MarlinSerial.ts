@@ -15,13 +15,16 @@ export default class MarlinSerial extends Serial {
           OK_TIMEOUT
         );
       }),
-      new Promise((resolve, reject) => {
-        this.on("line", (line) => {
+      new Promise((resolve, _) => {
+        function handler(line) {
           if (line === "ok") {
             done = true;
+            this.removeListener("line", handler);
             resolve(null);
           }
-        });
+        }
+
+        this.on("line", handler);
       }),
     ]);
   }
