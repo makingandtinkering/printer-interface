@@ -29,15 +29,15 @@
       on:line={(evt) => serialConsole.addLine(evt.detail.text)}
       on:error={(evt) => displayError(evt.detail.error)}
     />
-    <Console
-      bind:this={serialConsole}
-      on:data={(evt) => serialControl.addLines(evt.detail.lines)}
+    <CameraControl
+      on:error={(evt) => displayError(evt.detail.error)}
+      on:stream={(evt) => cameraView.setStream(evt.detail.stream)}
     />
+    <ScanningControl />
   </div>
-  <ScanningControl />
-  <CameraControl
-    on:error={(evt) => displayError(evt.detail.error)}
-    on:stream={(evt) => cameraView.setStream(evt.detail.stream)}
+  <Console
+    bind:this={serialConsole}
+    on:data={(evt) => serialControl.addLines(evt.detail.lines)}
   />
   <CameraView bind:this={cameraView} />
 </div>

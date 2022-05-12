@@ -62,9 +62,9 @@
   }
 </script>
 
-<Card padded style="width: 500px">
+<Card padded>
   <h3 style="margin: 0">
-    Video Control
+    Camera Control
     {#if loading}
       <CircularProgress style="height: 0.95em; width: 0.95em;" indeterminate />
     {/if}

@@ -24,13 +24,13 @@
 </script>
 
 <Card padded style="width: 500px">
-  <h3 style="margin: 0">Live View</h3>
+  <h3 style="margin: 0">Camera Live View</h3>
   <Content>
     <video bind:this={videoDisplay} style="width: 100%" playsinline autoplay>
       <track kind="captions" />
     </video>
   </Content>
-  <h3 style="margin: 0">Snapshot</h3>
+  <h3 style="margin: 0">Camera Snapshot</h3>
   <Content>
     <Button disabled={!stream} on:click={capture}>
       <Label>Capture</Label>

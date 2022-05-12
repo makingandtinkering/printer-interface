@@ -60,10 +60,12 @@
   }
 </script>
 
-<Card padded>
+<Card padded style="width: 500px;">
   <h3 style="margin: 0">Console</h3>
-  <Content>
-    <pre>{lines.join("\n")}</pre>
+  <Content style="display: flex; flex-direction: column; height: 100%">
+    <div style="overflow-x: scroll; flex-grow: 1; margin-bottom: 8px;">
+      <pre>{lines.join("\n")}</pre>
+    </div>
     <Textfield
       style="width: 100%;"
       variant="filled"
