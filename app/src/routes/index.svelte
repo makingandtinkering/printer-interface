@@ -8,6 +8,8 @@
   import CameraControl from "../components/CameraControl.svelte";
   import ScanningControl from "../components/ScanningControl.svelte";
 
+  import CameraView from "../components/CameraView.svelte";
+
   let errorSnackbar: SnackbarComponentDev;
   let errorSnackbarContents: string;
 
@@ -17,7 +19,7 @@
     errorSnackbar.open();
   }
 
-  let serialConsole, serialControl;
+  let serialConsole, serialControl, cameraView;
 </script>
 
 <div style="display: flex;flex-direction: row;">
@@ -33,7 +35,11 @@
     />
   </div>
   <ScanningControl />
-  <CameraControl on:error={(evt) => displayError(evt.detail.error)} />
+  <CameraControl
+    on:error={(evt) => displayError(evt.detail.error)}
+    on:stream={(evt) => cameraView.setStream(evt.detail.stream)}
+  />
+  <CameraView bind:this={cameraView} />
 </div>
 
 <Snackbar bind:this={errorSnackbar} labelText={errorSnackbarContents}>

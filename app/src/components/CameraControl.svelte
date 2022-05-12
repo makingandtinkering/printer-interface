@@ -4,18 +4,15 @@
   import Select, { Option } from "@smui/select";
   import CircularProgress from "@smui/circular-progress";
   import Tooltip, { Wrapper } from "@smui/tooltip";
-  import Button, { Label } from "@smui/button";
   import { Icon } from "@smui/common";
 
   const dispatch = createEventDispatcher();
 
   let loading: boolean = true;
   let permissionDenied: boolean = false;
-  let validStreamSource: boolean = false;
   let videoInputs: MediaDeviceInfo[] = [];
 
-  let videoDisplay, snapshotDisplay;
-  let snapshot: string = null;
+  let stream;
 
   onMount(async () => {
     try {
@@ -39,7 +36,7 @@
   function onVideoSourceSelect(evt) {
     const deviceId = evt.detail.value;
 
-    validStreamSource = false;
+    stream = null;
     if (deviceId) {
       loading = true;
       navigator.mediaDevices
@@ -48,52 +45,20 @@
             deviceId: { exact: deviceId },
           },
         })
-        .then((stream) => {
-          videoDisplay.srcObject = stream;
-          validStreamSource = true;
+        .then((_stream) => {
+          stream = _stream;
         })
         .catch((error) => {
           dispatch("error", { error });
         })
         .finally(() => {
           loading = false;
+          dispatch("stream", { stream });
         });
     } else {
-      videoDisplay.srcObject = undefined;
+      stream = null;
+      dispatch("stream", { stream });
     }
-  }
-
-  async function takePhoto() {
-    if (!validStreamSource) {
-      throw "No valid stream source available";
-    }
-
-    const stream = videoDisplay.srcObject;
-    const settings = stream.getVideoTracks()[0].getSettings();
-
-    snapshotDisplay.width = settings.width;
-    snapshotDisplay.height = settings.height;
-
-    const ctx = snapshotDisplay.getContext("2d");
-
-    ctx.drawImage(
-      videoDisplay,
-      0,
-      0,
-      snapshotDisplay.width,
-      snapshotDisplay.height
-    );
-
-    return snapshotDisplay.toDataURL("image/png");
-  }
-
-  function saveImage(imageStr, fileName) {
-    const ele = document.createElement("a");
-    ele.href = imageStr.replace("image/png", "application/octet-stream");
-    ele.download = fileName;
-    document.body.appendChild(ele);
-    ele.click();
-    ele.remove();
   }
 </script>
 
@@ -126,27 +91,5 @@
         >Usually USB2.0 UVC PC Camera</svelte:fragment
       >
     </Select>
-  </Content>
-  <h3 style="margin: 0">Live View</h3>
-  <Content>
-    <video bind:this={videoDisplay} style="width: 100%" playsinline autoplay>
-      <track kind="captions" />
-    </video>
-  </Content>
-  <h3 style="margin: 0">Snapshot</h3>
-  <Content>
-    <Button
-      disabled={!validStreamSource}
-      on:click={async () => (snapshot = await takePhoto())}
-    >
-      <Label>Capture</Label>
-    </Button>
-    <Button
-      disabled={snapshot === null}
-      on:click={() => saveImage(snapshot, "download.png")}
-    >
-      <Label>Download</Label>
-    </Button>
-    <canvas bind:this={snapshotDisplay} style="width: 100%" />
   </Content>
 </Card>
