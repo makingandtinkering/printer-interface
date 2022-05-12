@@ -37,7 +37,13 @@
       on:error={(evt) => displayError(evt.detail.error)}
       on:stream={(evt) => cameraView.setStream(evt.detail.stream)}
     />
-    <ScanningControl sendLine={(line) => serialControl.addLines([line])} />
+    <ScanningControl
+      sendLine={(line) => serialControl.addLines([line])}
+      savePhoto={() => {
+        cameraView.capture();
+        cameraView.save();
+      }}
+    />
   </div>
   <Console
     bind:this={serialConsole}

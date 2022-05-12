@@ -18,8 +18,8 @@
     snapshot = takePhoto(videoDisplay);
   }
 
-  export function save() {
-    saveImage(snapshot, "download.png");
+  export function save(filename) {
+    saveImage(snapshot, filename || "download.png");
   }
 </script>
 

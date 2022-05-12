@@ -45,6 +45,7 @@
 
     if (step_index === 0) {
       // take photo here
+      savePhoto();
       photo_count++;
 
       await sendLine("G91");
@@ -72,6 +73,8 @@
       }
     }
 
+    savePhoto();
+
     if (!done) {
       // Wait for move to be done
       await sendLine("M400");
@@ -84,6 +87,7 @@
   }
 
   export let sendLine: Function = null;
+  export let savePhoto: Function = null;
 </script>
 
 <Card padded style="height: 100%">
