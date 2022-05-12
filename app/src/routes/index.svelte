@@ -6,7 +6,7 @@
   import Console from "../components/Console.svelte";
   import SerialControl from "../components/SerialControl.svelte";
   import CameraControl from "../components/CameraControl.svelte";
-  import { defaultMaxListeners } from "events";
+  import ScanningControl from "../components/ScanningControl.svelte";
 
   let errorSnackbar: SnackbarComponentDev;
   let errorSnackbarContents: string;
@@ -20,7 +20,7 @@
   let serialConsole, serialControl;
 </script>
 
-<div style="display: flex;flex-direction: row; width: 100vw; height: 100vh;">
+<div style="display: flex;flex-direction: row;">
   <div style="display: flex;flex-direction: column">
     <SerialControl
       bind:this={serialControl}
@@ -32,6 +32,7 @@
       on:data={(evt) => serialControl.addLines(evt.detail.lines)}
     />
   </div>
+  <ScanningControl />
   <CameraControl on:error={(evt) => displayError(evt.detail.error)} />
 </div>
 
