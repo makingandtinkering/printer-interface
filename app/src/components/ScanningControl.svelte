@@ -18,7 +18,11 @@
   let step_index: number = 0;
 
   $: if (!isNaN(distance_x) && !isNaN(distance_y) && !isNaN(step)) {
-    total_photo_count = (distance_x / step) * (distance_y / step);
+    const _dx = Math.floor(distance_x * 100) / 100;
+    const _dy = Math.floor(distance_y * 100) / 100;
+    const _step = Math.floor(step * 100) / 100;
+
+    total_photo_count = Math.floor(_dx / _step) * Math.floor(_dy / _step);
   }
 
   function toggleState() {
