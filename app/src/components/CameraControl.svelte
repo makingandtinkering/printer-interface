@@ -43,32 +43,27 @@
     loading = false;
   });
 
-  function onVideoSourceSelect(evt) {
+  async function onVideoSourceSelect(evt) {
     const deviceId = evt.detail;
 
     stream = null;
     if (deviceId) {
       loading = true;
-      navigator.mediaDevices
-        .getUserMedia({
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
           video: {
             deviceId: { exact: deviceId },
           },
-        })
-        .then((_stream) => {
-          stream = _stream;
-        })
-        .catch((error) => {
-          dispatch("error", { error });
-        })
-        .finally(() => {
-          loading = false;
-          dispatch("stream", { stream });
         });
+      } catch (error) {
+        dispatch("error", { error });
+      }
+      loading = false;
     } else {
       stream = null;
-      dispatch("stream", { stream });
     }
+
+    dispatch("stream", { stream });
   }
 </script>
 
