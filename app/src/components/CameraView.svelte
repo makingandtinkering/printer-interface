@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Card, { Content } from "@smui/card";
-  import Button, { Label } from "@smui/button";
+  import { Button } from "carbon-components-svelte";
+  import Tile from "./Tile.svelte";
 
   import { takePhoto, saveImage } from "../utility/Utility";
 
-  let videoDisplay, snapshotDisplay;
+  let videoDisplay;
 
   let stream,
     snapshot = null;
@@ -23,25 +23,21 @@
   }
 </script>
 
-<Card padded style="width: 500px">
+<Tile style="width: 500px">
   <h3 style="margin: 0">Camera Live View</h3>
-  <Content>
+  <div>
     <video bind:this={videoDisplay} style="width: 100%" playsinline autoplay>
       <track kind="captions" />
     </video>
-  </Content>
+  </div>
   <h3 style="margin: 0">Camera Snapshot</h3>
-  <Content>
-    <Button disabled={!stream} on:click={capture}>
-      <Label>Capture</Label>
-    </Button>
-    <Button disabled={!snapshot} on:click={save}>
-      <Label>Download</Label>
-    </Button>
+  <div>
+    <Button disabled={!stream} on:click={capture}>Capture</Button>
+    <Button disabled={!snapshot} on:click={save}>Download</Button>
     <div>
       {#if snapshot}
         <img src={snapshot} style="width: 100%" alt="Capture" />
       {/if}
     </div>
-  </Content>
-</Card>
+  </div>
+</Tile>

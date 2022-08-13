@@ -1,10 +1,8 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
 
-  import Select, { Option } from "@smui/select";
-  import Card, { Content } from "@smui/card";
-  import Button, { Label } from "@smui/button";
-  import Dialog from "@smui/dialog";
+  import { Select, SelectItem, Modal, Button } from "carbon-components-svelte";
+  import Tile from "./Tile.svelte";
 
   import MarlinSerial from "../utility/MarlinSerial";
 
@@ -19,10 +17,8 @@
     mounted = true;
   });
 
-  // This should technically be a string but smui/select seems to misbehave when passing a number
-  //   numbers don't get "matched" correctly to the values and the select thinks its still empty
-  const BAUDRATES: string[] = ["250000", "115200", "9600"];
-  let baudRate: string = BAUDRATES[0];
+  const BAUDRATES: number[] = [250000, 115200, 9600];
+  let baudRate = BAUDRATES[0];
 
   let connected: boolean = false;
 
@@ -48,7 +44,7 @@
       const port = await serial.selectPort();
       if (!port) return;
 
-      await serial.open(port, parseInt(baudRate, 10));
+      await serial.open(port, baudRate);
     } catch (error) {
       dispatch("error", { error });
     }
@@ -71,34 +67,39 @@
       dispatch("error", { error });
     }
   }
+
+  let unsupportedModalOpen = true;
 </script>
 
 {#if mounted && !MarlinSerial.isSupported()}
-  <Dialog open scrimClickAction="" escapeKeyAction="">
-    <Content>
-      Your browser does not support Serial connections. Try Chrome, Edge or
-      Firefox?
-    </Content>
-  </Dialog>
+  <Modal
+    danger
+    open={unsupportedModalOpen}
+    on:click:button--primary={() => (unsupportedModalOpen = false)}
+    primaryButtonText="Acknowledge"
+    modalHeading="Unsupported browser operation"
+  >
+    <p>
+      Your browser does not support Serial connections. You will not be able to
+      connect to your printer. Try Chrome, Edge or Firefox?
+    </p>
+  </Modal>
 {/if}
 
-<Card padded>
+<Tile>
   <h3 style="margin: 0">Serial Port</h3>
-  <Content>
-    <Select bind:value={baudRate} label="Baud Rate">
-      {#each BAUDRATES as br}
-        <Option value={br}>{br}</Option>
-      {/each}
-      <svelte:fragment slot="helperText">Usually 250000</svelte:fragment>
-    </Select>
-    {#if !connected}
-      <Button variant="unelevated" on:click={connect}>
-        <Label>Connect</Label>
-      </Button>
-    {:else}
-      <Button variant="unelevated" on:click={disconnect}>
-        <Label>Disconnect</Label>
-      </Button>
-    {/if}
-  </Content>
-</Card>
+  <Select
+    bind:selected={baudRate}
+    labelText="Baud Rate"
+    helperText="Usually 250000"
+  >
+    {#each BAUDRATES as br}
+      <SelectItem value={br} text={br.toString()} />
+    {/each}
+  </Select>
+  {#if !connected}
+    <Button kind="primary" on:click={connect}>Connect</Button>
+  {:else}
+    <Button kind="secondary" on:click={disconnect}>Disconnect</Button>
+  {/if}
+</Tile>

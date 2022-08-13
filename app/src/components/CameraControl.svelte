@@ -1,10 +1,15 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
-  import Card, { Content } from "@smui/card";
-  import Select, { Option } from "@smui/select";
-  import CircularProgress from "@smui/circular-progress";
-  import Tooltip, { Wrapper } from "@smui/tooltip";
-  import { Icon } from "@smui/common";
+
+  import {
+    Select,
+    SelectItem,
+    Loading,
+    TooltipIcon,
+  } from "carbon-components-svelte";
+  import Warning from "carbon-icons-svelte/lib/Warning.svelte";
+
+  import Tile from "./Tile.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -22,9 +27,14 @@
         error =
           "Camera access has to be granted for this application to capture images.";
         permissionDenied = true;
+      } else if (error.toString().includes("Requested device not found")) {
+        // No media devices connected
+        error = null;
       }
 
-      dispatch("error", { error });
+      if (error !== null) {
+        dispatch("error", { error });
+      }
     }
     const devices = await navigator.mediaDevices.enumerateDevices();
     videoInputs = devices.filter(
@@ -34,7 +44,7 @@
   });
 
   function onVideoSourceSelect(evt) {
-    const deviceId = evt.detail.value;
+    const deviceId = evt.detail;
 
     stream = null;
     if (deviceId) {
@@ -62,34 +72,31 @@
   }
 </script>
 
-<Card padded>
-  <h3 style="margin: 0">
-    Camera Control
+<Tile>
+  <h3 style="margin: 0; display: flex; flex-direction: row">
+    <span style="margin-right: 4px;">Camera Control</span>
     {#if loading}
-      <CircularProgress style="height: 0.95em; width: 0.95em;" indeterminate />
+      <div style="all: initial; display: flex; align-items: center;">
+        <!-- Some inherited style is causing the loading icon to be offset, reset all style as a quick bandaid-->
+        <Loading withOverlay={false} small />
+      </div>
     {/if}
     {#if permissionDenied}
-      <Wrapper>
-        <Icon class="material-icons" style="font-size: 1em;">warning</Icon>
-        <Tooltip
-          >Camera access has to be granted for this application to capture
-          images. Please grant the permission and refresh the page.</Tooltip
-        >
-      </Wrapper>
+      <TooltipIcon
+        tooltipText="Camera access has to be granted for this application to capture
+    images. Please grant the permission and refresh the page."
+        icon={Warning}
+      />
     {/if}
   </h3>
-  <Content>
-    <Select
-      on:MDCSelect:change={onVideoSourceSelect}
-      label="Device"
-      disabled={loading || permissionDenied}
-    >
-      {#each videoInputs as input}
-        <Option value={input.deviceId}>{input.label}</Option>
-      {/each}
-      <svelte:fragment slot="helperText"
-        >Usually USB2.0 UVC PC Camera</svelte:fragment
-      >
-    </Select>
-  </Content>
-</Card>
+  <Select
+    on:change={onVideoSourceSelect}
+    labelText="Device"
+    helperText="Usually USB2.0 UVC PC Camera"
+    disabled={loading || permissionDenied}
+  >
+    {#each videoInputs as input}
+      <SelectItem value={input.deviceId} text={input.label} />
+    {/each}
+  </Select>
+</Tile>

@@ -1,8 +1,6 @@
 <script lang="ts">
-  import Card, { Content } from "@smui/card";
-  import Textfield from "@smui/textfield";
-  import HelperText from "@smui/textfield/helper-text";
-  import Button, { Label } from "@smui/button";
+  import { NumberInput, Button } from "carbon-components-svelte";
+  import Tile from "./Tile.svelte";
 
   let distance_x: number = 4,
     distance_y: number = 4,
@@ -90,78 +88,83 @@
   export let savePhoto: Function = null;
 </script>
 
-<Card padded style="height: 100%">
+<Tile style="width: 500px">
   <h3 style="margin: 0">Scanning Controls</h3>
-  <Content>
+  <div class="textfield-container">
     <div>
-      <Textfield
+      <NumberInput
         bind:value={distance_x}
         disabled={active}
         label="X Distance (mm)"
         type="number"
-        input$min="0.01"
+        min={0.01}
         class="field"
       />
-      <Textfield
+    </div>
+    <div>
+      <NumberInput
         bind:value={distance_y}
         disabled={active}
         label="Y Distance (mm)"
         type="number"
-        input$min="0.01"
+        min={0.01}
         class="field"
       />
-      <Textfield
+    </div>
+    <div>
+      <NumberInput
         bind:value={step}
         disabled={active}
         label="Step Size (mm)"
         type="number"
-        input$min="0.1"
+        min={0.1}
         class="field"
       />
     </div>
-    <div style="display: flex;" class="textfield-container">
-      <div>
-        <Textfield
-          bind:value={feedrate}
-          disabled={active}
-          label="Move Speed (mm/s)"
-          type="number"
-          input$min="1000"
-          input$max="3000"
-          style="width: 150px"
-        />
-      </div>
-      <div>
-        <Textfield
-          bind:value={move_delay}
-          disabled={active}
-          label="Move Delay (ms)"
-          type="number"
-          input$min="0"
-          class="field"
-        >
-          <svelte:fragment slot="helper">
-            <HelperText>Delay after move is completed</HelperText>
-          </svelte:fragment>
-        </Textfield>
-      </div>
+  </div>
+  <div class="textfield-container">
+    <div>
+      <NumberInput
+        bind:value={feedrate}
+        disabled={active}
+        label="Move Speed (mm/s)"
+        type="number"
+        min={1000}
+        max={3000}
+      />
     </div>
     <div>
-      <Button
-        variant="outlined"
-        on:click={toggleState}
-        style="margin-right: 8px"
-      >
-        <Label>{active ? "Stop" : "Start"}</Label>
-      </Button>
-      {photo_count}/{total_photo_count} photos done
+      <NumberInput
+        bind:value={move_delay}
+        disabled={active}
+        label="Move Delay (ms)"
+        type="number"
+        min={0}
+        class="field"
+        helperText="Delay after move is completed"
+      />
     </div>
-  </Content>
-</Card>
+  </div>
+  <div style="display: flex; align-items: center;">
+    <Button kind="primary" on:click={toggleState} style="margin-right: 8px">
+      {active ? "Stop" : "Start"}
+    </Button>
+    {#if active}
+      {photo_count}/{total_photo_count} photos done
+    {:else}
+      Full scan will take {total_photo_count} photos
+    {/if}
+  </div>
+</Tile>
 
 <style lang="scss">
   :global(.field) {
     width: 100px;
+  }
+
+  .textfield-container {
+    display: flex;
+    flex-direction: row;
   }
 
   .textfield-container > * {

@@ -5,9 +5,9 @@
   const ROW_SEPARATOR_REGEX = /[\r\n]/;
 
   import { createEventDispatcher } from "svelte";
-  import Card, { Content } from "@smui/card";
-  import Textfield from "@smui/textfield";
-  import HelperText from "@smui/textfield/helper-text";
+
+  import { TextArea } from "carbon-components-svelte";
+  import Tile from "./Tile.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -62,27 +62,24 @@
   }
 </script>
 
-<Card padded style="width: 500px;">
+<Tile style="width: 500px;">
   <h3 style="margin: 0">Console</h3>
-  <Content style="display: flex; flex-direction: column; height: 100%">
+  <div style="display: flex; flex-direction: column; height: 100%">
     <div style="overflow-x: scroll; flex-grow: 1; margin-bottom: 8px;">
       <pre>{lines.join("\n")}</pre>
     </div>
-    <Textfield
+    <TextArea
       style="width: 100%;"
-      variant="filled"
-      textarea={textArea}
-      input$rows={Math.min(
+      rows={Math.min(
         TEXTAREA_MAX_ROWS,
         textInputContent.split(ROW_SEPARATOR_REGEX).length
       )}
       bind:this={textInput}
       bind:value={textInputContent}
-      on:keypress={onKeypress}
+      on:keydown={onKeypress}
       disabled={!inputEnabled}
       title={inputEnabled ? "" : "A serial port must be connected"}
-    >
-      <HelperText slot="helper">Ctrl-Enter to insert new line</HelperText>
-    </Textfield>
-  </Content>
-</Card>
+      helperText="Ctrl-Enter to insert new line"
+    />
+  </div>
+</Tile>
