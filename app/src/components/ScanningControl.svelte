@@ -39,6 +39,14 @@
   }
 
   async function takeStep() {
+    try {
+      await doStep();
+    } catch (_) {
+      active = false;
+    }
+  }
+
+  async function doStep() {
     if (!active) {
       return;
     }
@@ -48,7 +56,7 @@
       savePhoto();
       photo_count++;
 
-      await sendLine("G91");
+      await sendLineRaise("G91");
     }
 
     const cur_step_y = Math.floor(step_index / step_x);
@@ -61,15 +69,15 @@
         done = true;
       } else {
         // Last step in this row, move up
-        await sendLine(`G0 Y${step} F${feedrate}`);
+        await sendLineRaise(`G0 Y${step} F${feedrate}`);
       }
     } else {
       if (cur_step_y % 2 == 0) {
         // Right
-        await sendLine(`G0 X${step} F${feedrate}`);
+        await sendLineRaise(`G0 X${step} F${feedrate}`);
       } else {
         // Left
-        await sendLine(`G0 X-${step} F${feedrate}`);
+        await sendLineRaise(`G0 X-${step} F${feedrate}`);
       }
     }
 
@@ -83,6 +91,14 @@
       setTimeout(takeStep, move_delay);
     } else {
       active = false;
+    }
+  }
+
+  async function sendLineRaise(line) {
+    if (!sendLine) return;
+
+    if (!(await sendLine(line))) {
+      throw new Error("Timeout, no ok");
     }
   }
 

@@ -54,7 +54,7 @@
     await serial.close();
   }
 
-  export async function addLines(lines: string[]) {
+  export async function addLines(lines: string[]): Promise<boolean> {
     try {
       for (const line of lines) {
         // Send to console for display too
@@ -65,7 +65,10 @@
       }
     } catch (error) {
       dispatch("error", { error });
+      return false;
     }
+
+    return true;
   }
 
   let unsupportedModalOpen = true;
