@@ -9,7 +9,7 @@
 ## Modifying Code
 
 1. Open the Command Palette (`Ctrl-Shift-P`), `Remote-Containers: Rebuild and Reopen in Container`
-2. `cd app`
+2. `cd app` (all steps here and below assume you're in the `app` folder)
 3. `npm install`
 4. `npm run dev`
 
