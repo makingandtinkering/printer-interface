@@ -18,17 +18,15 @@
   let step_index: number = 0;
 
   $: if (!isNaN(distance_x) && !isNaN(distance_y) && !isNaN(step)) {
-    const _dx = Math.floor(distance_x * 100) / 100;
-    const _dy = Math.floor(distance_y * 100) / 100;
-    const _step = Math.floor(step * 100) / 100;
+    const _dx = Math.max(Math.floor(distance_x * 100) / 100, 1);
+    const _dy = Math.max(Math.floor(distance_y * 100) / 100, 1);
+    const _step = Math.max(Math.floor(step * 100) / 100, 0.1);
 
     total_photo_count = Math.floor(_dx / _step) * Math.floor(_dy / _step);
   }
 
   function toggleState() {
     active = !active;
-
-    console.log("active", active);
 
     if (active) {
       step_index = 0;
@@ -103,6 +101,7 @@
         type="number"
         min={0.01}
         class="field"
+        hideSteppers={true}
       />
     </div>
     <div>
@@ -113,6 +112,7 @@
         type="number"
         min={0.01}
         class="field"
+        hideSteppers={true}
       />
     </div>
     <div>
@@ -123,6 +123,7 @@
         type="number"
         min={0.1}
         class="field"
+        hideSteppers={true}
       />
     </div>
   </div>
@@ -135,6 +136,7 @@
         type="number"
         min={1000}
         max={3000}
+        step={100}
       />
     </div>
     <div>
@@ -144,6 +146,7 @@
         label="Move Delay (ms)"
         type="number"
         min={0}
+        step={100}
         class="field"
         helperText="Delay after move is completed"
       />
