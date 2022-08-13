@@ -88,18 +88,22 @@
 
 <Tile>
   <h3 style="margin: 0">Serial Port</h3>
-  <Select
-    bind:selected={baudRate}
-    labelText="Baud Rate"
-    helperText="Usually 250000"
-  >
-    {#each BAUDRATES as br}
-      <SelectItem value={br} text={br.toString()} />
-    {/each}
-  </Select>
-  {#if !connected}
-    <Button kind="primary" on:click={connect}>Connect</Button>
-  {:else}
-    <Button kind="secondary" on:click={disconnect}>Disconnect</Button>
-  {/if}
+  <div style="display: flex; flex-direction: row">
+    <Select
+      bind:selected={baudRate}
+      labelText="Baud Rate"
+      helperText="Usually 250000"
+    >
+      {#each BAUDRATES as br}
+        <SelectItem value={br} text={br.toString()} />
+      {/each}
+    </Select>
+    <div style="display: flex; align-items: center">
+      {#if !connected}
+        <Button kind="primary" on:click={connect}>Connect</Button>
+      {:else}
+        <Button kind="secondary" on:click={disconnect}>Disconnect</Button>
+      {/if}
+    </div>
+  </div>
 </Tile>
