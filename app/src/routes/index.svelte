@@ -11,11 +11,14 @@
   import CameraView from "../components/CameraView.svelte";
   import PrinterControl from "../components/PrinterControl.svelte";
 
-  let errorContents: string;
+  let errors = new Map();
 
   function displayError(err) {
     console.error(err);
-    errorContents = `Error: ${err.message || err.toString()}`;
+    const id = new Date().getTime();
+    const errorContents = `Error: ${err.message || err.toString()}`;
+    errors.set(id, errorContents);
+    errors = errors;
   }
 
   let serialConsole, serialControl, cameraView;
@@ -25,7 +28,7 @@
 </script>
 
 <Header platformName="Printer Interface" />
-<Content>
+<Content style="position: fixed">
   <div style="display: flex;flex-direction: row;">
     <div style="display: flex;flex-direction: column">
       <SerialControl
@@ -63,7 +66,17 @@
     <CameraView bind:this={cameraView} />
   </div>
 
-  {#if errorContents}
-    <ToastNotification title="Error" subtitle={errorContents} timeout={5000} />
-  {/if}
+  <div style="position: absolute; top: 64px; right: 16px; text-align: right;">
+    {#each [...errors] as [id, error]}
+      <ToastNotification
+        title="Error"
+        subtitle={error}
+        timeout={5000}
+        on:close={() => {
+          errors.delete(id);
+          errors = errors;
+        }}
+      />
+    {/each}
+  </div>
 </Content>
