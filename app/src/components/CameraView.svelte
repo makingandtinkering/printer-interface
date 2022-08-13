@@ -18,7 +18,7 @@
     snapshot = takePhoto(videoDisplay);
   }
 
-  export function save(filename) {
+  export function save(filename?: string) {
     saveImage(snapshot, filename || "download.png");
   }
 </script>
@@ -33,7 +33,7 @@
   <h3 style="margin: 0">Camera Snapshot</h3>
   <div>
     <Button disabled={!stream} on:click={capture}>Capture</Button>
-    <Button disabled={!snapshot} on:click={save}>Download</Button>
+    <Button disabled={!snapshot} on:click={() => save()}>Download</Button>
     <div>
       {#if snapshot}
         <img src={snapshot} style="width: 100%" alt="Capture" />
