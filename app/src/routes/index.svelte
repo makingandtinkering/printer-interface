@@ -21,6 +21,7 @@
   let serialConsole, serialControl, cameraView;
 
   let serialConnected: boolean = false;
+  let stream = null;
 </script>
 
 <Header platformName="Printer Interface" />
@@ -36,7 +37,10 @@
       />
       <CameraControl
         on:error={(evt) => displayError(evt.detail.error)}
-        on:stream={(evt) => cameraView.setStream(evt.detail.stream)}
+        on:stream={(evt) => {
+          stream = evt.detail.stream;
+          cameraView.setStream(stream);
+        }}
       />
       <ScanningControl
         sendLine={(line) => serialControl.addLines([line])}
@@ -44,8 +48,12 @@
           cameraView.capture();
           cameraView.save();
         }}
+        disabled={!serialConnected || stream === null}
       />
-      <PrinterControl sendLine={(line) => serialControl.addLines([line])} />
+      <PrinterControl
+        sendLine={(line) => serialControl.addLines([line])}
+        disabled={!serialConnected}
+      />
     </div>
     <Console
       bind:this={serialConsole}

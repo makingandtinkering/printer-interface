@@ -88,6 +88,8 @@
 
   export let sendLine: Function = null;
   export let savePhoto: Function = null;
+
+  export let disabled = true;
 </script>
 
 <Tile style="width: 500px">
@@ -153,7 +155,13 @@
     </div>
   </div>
   <div style="display: flex; align-items: center;">
-    <Button kind="primary" on:click={toggleState} style="margin-right: 8px">
+    <Button
+      kind="primary"
+      on:click={toggleState}
+      style="margin-right: 8px"
+      disabled={!active && disabled}
+      title={disabled ? "Connect to your printer and camera first!" : undefined}
+    >
       {active ? "Stop" : "Start"}
     </Button>
     {#if active}

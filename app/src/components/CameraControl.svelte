@@ -55,6 +55,11 @@
             deviceId: { exact: deviceId },
           },
         });
+
+        stream.getVideoTracks()[0].onended = () => {
+          stream = null;
+          dispatch("stream", { stream });
+        };
       } catch (error) {
         dispatch("error", { error });
       }
