@@ -2,7 +2,7 @@
   "name": "app",
   "version": "0.0.1",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "NODE_ENV=development vite --host 0.0.0.0",
     "build": "vite build",
     "package": "vite package",
     "preview": "vite preview",
