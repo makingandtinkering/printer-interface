@@ -1,7 +1,13 @@
 <script lang="ts">
   import "carbon-components-svelte/css/g90.css";
 
-  import { Header, Content, ToastNotification } from "carbon-components-svelte";
+  import {
+    Header,
+    Content,
+    ToastNotification,
+    Accordion,
+    AccordionItem,
+  } from "carbon-components-svelte";
 
   import Console from "../components/Console.svelte";
   import SerialControl from "../components/SerialControl.svelte";
@@ -28,23 +34,28 @@
 </script>
 
 <Header platformName="Printer Interface" />
-<Content style="position: fixed">
+<Content style="position: fixed;">
   <div style="display: flex;flex-direction: row;">
     <div style="display: flex;flex-direction: column">
-      <SerialControl
-        bind:this={serialControl}
-        on:line={(evt) => serialConsole.addLine(evt.detail.text)}
-        on:error={(evt) => displayError(evt.detail.error)}
-        on:connect={() => (serialConnected = true)}
-        on:disconnect={() => (serialConnected = false)}
-      />
-      <CameraControl
-        on:error={(evt) => displayError(evt.detail.error)}
-        on:stream={(evt) => {
-          stream = evt.detail.stream;
-          cameraView.setStream(stream);
-        }}
-      />
+      <Accordion
+        ><AccordionItem title="Configuration">
+          <SerialControl
+            bind:this={serialControl}
+            on:line={(evt) => serialConsole.addLine(evt.detail.text)}
+            on:error={(evt) => displayError(evt.detail.error)}
+            on:connect={() => (serialConnected = true)}
+            on:disconnect={() => (serialConnected = false)}
+          />
+          <CameraControl
+            on:error={(evt) => displayError(evt.detail.error)}
+            on:stream={(evt) => {
+              stream = evt.detail.stream;
+              cameraView.setStream(stream);
+            }}
+          />
+        </AccordionItem></Accordion
+      >
+
       <ScanningControl
         sendLine={(line) => serialControl.addLines([line])}
         savePhoto={() => {

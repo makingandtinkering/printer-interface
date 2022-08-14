@@ -18,7 +18,7 @@
   export let disabled = true;
 </script>
 
-<Tile style="height: 100%">
+<Tile>
   <h3 style="margin: 0">Printer Controls</h3>
   <table>
     <tr>
