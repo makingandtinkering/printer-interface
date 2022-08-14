@@ -37,19 +37,16 @@
 
   let textInput;
   let textInputContent: string = "";
-  let textArea: boolean = false;
 
   export let inputEnabled: boolean = false;
 
   function onKeypress(evt) {
-    if (evt.key === "\n") {
-      textArea = true;
+    if (evt.key === "Enter" && evt.ctrlKey) {
       textInputContent += "\n";
       setTimeout(() => {
-        const e = textInput.getElement().querySelector("textarea");
         // Scroll to bottom
-        e.scrollTop = e.scrollHeight;
-        e.focus();
+        textInput.scrollTop = textInput.scrollHeight;
+        textInput.focus();
       }, 100);
       evt.preventDefault();
     } else if (evt.key === "Enter" && textInputContent.trim().length > 0) {
@@ -74,7 +71,7 @@
         TEXTAREA_MAX_ROWS,
         textInputContent.split(ROW_SEPARATOR_REGEX).length
       )}
-      bind:this={textInput}
+      bind:ref={textInput}
       bind:value={textInputContent}
       on:keydown={onKeypress}
       disabled={!inputEnabled}
