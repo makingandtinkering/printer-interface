@@ -64,8 +64,8 @@
 
 <Tile style="width: 500px;">
   <h3 style="margin: 0">Console</h3>
-  <div style="display: flex; flex-direction: column; height: 100%">
-    <div style="overflow-x: scroll; flex-grow: 1; margin-bottom: 8px;">
+  <div class="console-container">
+    <div style="overflow: scroll; flex-grow: 1; margin-bottom: 8px;">
       <pre>{lines.join("\n")}</pre>
     </div>
     <TextArea
@@ -83,3 +83,16 @@
     />
   </div>
 </Tile>
+
+<style>
+  .console-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 200px);
+  }
+
+  .console-container > :global(.bx--form-item) {
+    flex: none !important;
+    margin-bottom: 32px;
+  }
+</style>
