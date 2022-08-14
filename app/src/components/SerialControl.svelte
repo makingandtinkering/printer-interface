@@ -105,7 +105,7 @@
       {#if !connected}
         <Button kind="primary" on:click={connect}>Connect</Button>
       {:else}
-        <Button kind="secondary" on:click={disconnect}>Disconnect</Button>
+        <Button kind="primary" on:click={disconnect}>Disconnect</Button>
       {/if}
     </div>
   </div>
