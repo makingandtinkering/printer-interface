@@ -35,7 +35,7 @@
     lines = lines;
   }
 
-  let textInput;
+  let textInput, textOutput;
   let textInputContent: string = "";
 
   export let inputEnabled: boolean = false;
@@ -54,6 +54,11 @@
         lines: textInputContent.split(ROW_SEPARATOR_REGEX),
       });
       textInputContent = "";
+
+      setTimeout(() => {
+        // Scroll to bottom
+        textOutput.scrollTop = textOutput.scrollHeight;
+      }, 100);
       evt.preventDefault();
     }
   }
@@ -62,7 +67,10 @@
 <Tile style="width: 500px;">
   <h3 style="margin: 0">Console</h3>
   <div class="console-container">
-    <div style="overflow: scroll; flex-grow: 1; margin-bottom: 8px;">
+    <div
+      bind:this={textOutput}
+      style="overflow: scroll; flex-grow: 1; margin-bottom: 8px;"
+    >
       <pre>{lines.join("\n")}</pre>
     </div>
     <TextArea
