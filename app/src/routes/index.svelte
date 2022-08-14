@@ -38,7 +38,7 @@
   <div style="display: flex;flex-direction: row;">
     <div style="display: flex;flex-direction: column">
       <Accordion
-        ><AccordionItem title="Configuration">
+        ><AccordionItem open title="Configuration">
           <SerialControl
             bind:this={serialControl}
             on:line={(evt) => serialConsole.addLine(evt.detail.text)}
