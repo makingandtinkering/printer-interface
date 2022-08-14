@@ -25,6 +25,21 @@
     )}.${pad(d.getMilliseconds(), 3)}`;
   }
 
+  function scrollInputToBottom() {
+    setTimeout(() => {
+      // Scroll to bottom
+      textInput.scrollTop = textInput.scrollHeight;
+      textInput.focus();
+    }, 100);
+  }
+
+  function scrollOutputToBottom() {
+    setTimeout(() => {
+      // Scroll to bottom
+      textOutput.scrollTop = textOutput.scrollHeight;
+    }, 100);
+  }
+
   export function addLine(line: string) {
     lines.push(`[${getTimestampString()}] ${line}`);
 
@@ -33,6 +48,7 @@
     }
 
     lines = lines;
+    scrollOutputToBottom();
   }
 
   let textInput, textOutput;
@@ -43,11 +59,7 @@
   function onKeypress(evt) {
     if (evt.key === "Enter" && evt.ctrlKey) {
       textInputContent += "\n";
-      setTimeout(() => {
-        // Scroll to bottom
-        textInput.scrollTop = textInput.scrollHeight;
-        textInput.focus();
-      }, 100);
+      scrollInputToBottom();
       evt.preventDefault();
     } else if (evt.key === "Enter" && textInputContent.trim().length > 0) {
       dispatch("data", {
@@ -55,10 +67,7 @@
       });
       textInputContent = "";
 
-      setTimeout(() => {
-        // Scroll to bottom
-        textOutput.scrollTop = textOutput.scrollHeight;
-      }, 100);
+      scrollOutputToBottom();
       evt.preventDefault();
     }
   }
